@@ -1,0 +1,20 @@
+//app.scss
+
+a {
+	cursor: pointer;
+}
+
+.card {
+
+	.card-image {
+
+		.card-title {
+			right: 0;
+			left: inherit;
+			padding: 7px 10px;
+			background: rgba(0,0,0,0.8);
+		}
+
+	}
+
+}
