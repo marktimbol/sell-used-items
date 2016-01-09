@@ -19028,47 +19028,33 @@ module.exports = require('./lib/React');
 'use strict';
 
 var React = require('react');
-
 var ReactDOM = require('react-dom');
 
 var Items = React.createClass({
 	displayName: 'Items',
 	getInitialState: function getInitialState() {
-
 		return {
-
 			items: []
-
 		};
 	},
 	fetchItems: function fetchItems() {
-
 		$.ajax({
-
 			url: this.props.url,
-
 			dataType: 'json',
-
 			cache: false,
-
 			success: function (data) {
-
 				this.setState({ items: data });
 			}.bind(this),
-
 			error: function (xhr, status, err) {
-
 				console.log('There was an error while making a request to ' + this.props.url);
 			}.bind(this)
-
 		});
 	},
 	componentDidMount: function componentDidMount() {
-
+		console.log(window.signedIn);
 		this.fetchItems();
 	},
 	render: function render() {
-
 		var itemsList = this.state.items.map(function (item) {
 
 			var itemUrl = '/items/' + item.id;
@@ -19099,6 +19085,11 @@ var Item = React.createClass({
 	},
 	onLikeItem: function onLikeItem() {
 
+		if (!window.signedIn) {
+			alert('You need to login in before you can like an item.');
+			return;
+		}
+
 		var postUrl = 'http://sell-used-items.dev/likes';
 
 		$.ajaxSetup({
@@ -19115,11 +19106,9 @@ var Item = React.createClass({
 				console.log(data);
 			}.bind(this),
 			error: function error(xhr, status, err) {
-				console.error(err.toString());
+				console.log(status);
 			}
 		});
-
-		console.log('User like the item with an id of ' + this.props.itemId);
 	},
 	render: function render() {
 

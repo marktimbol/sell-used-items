@@ -148,6 +148,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
