@@ -11,11 +11,22 @@ class PagesController extends Controller
 {
     public function home()
     {
-    	Auth::loginUsingId(1);
+    	$user = [];	
+    	$userLikes = [];
+
+    	if( Auth::user() )
+    	{
+    		$user = Auth::user();
+
+    		$userLikes = $user->likes;
+    	}
 
     	\JavaScript::put([
-    		'signedIn' => Auth::user() ? true : false
-    		]);
+    		'signedIn' => $user ? true : false,
+    		'user' => [
+    			'likes'	=> $userLikes
+    		]
+    	]);
     	return view('public.home');
     }
 }

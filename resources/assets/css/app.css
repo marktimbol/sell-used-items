@@ -7,4 +7,10 @@ a {
   padding: 7px 10px;
   background: rgba(0, 0, 0, 0.8); }
 
+.card .card-action a {
+  color: #7f7f7f !important; }
+  .card .card-action a.liked {
+    font-weight: bold;
+    color: #5890ff !important; }
+
 /*# sourceMappingURL=app.css.map */

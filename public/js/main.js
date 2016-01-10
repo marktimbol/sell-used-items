@@ -19030,48 +19030,62 @@ module.exports = require('./lib/React');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var Items = React.createClass({
-	displayName: 'Items',
+var LikeButton = React.createClass({
+	displayName: 'LikeButton',
 	getInitialState: function getInitialState() {
 		return {
-			items: []
+			likeButtonClassName: ''
 		};
 	},
-	fetchItems: function fetchItems() {
-		$.ajax({
-			url: this.props.url,
-			dataType: 'json',
-			cache: false,
-			success: function (data) {
-				this.setState({ items: data });
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log('There was an error while making a request to ' + this.props.url);
-			}.bind(this)
+	setItemlikeButtonClassName: function setItemlikeButtonClassName() {
+
+		var props = this.props;
+
+		var itemId = $.grep(window.user.likes, function (item) {
+			return item.likeable_id == props.itemId;
 		});
+
+		if (itemId.length) {
+			this.setState({ likeButtonClassName: 'liked' });
+		}
 	},
 	componentDidMount: function componentDidMount() {
-		console.log(window.signedIn);
-		this.fetchItems();
+
+		this.setItemlikeButtonClassName();
+
+		console.log(this.props.likeButtonClassName);
+
+		if (this.props.likeButtonClassName) {
+			this.setState({ likeButtonClassName: this.props.likeButtonClassName });
+		}
 	},
 	render: function render() {
-		var itemsList = this.state.items.map(function (item) {
-
-			var itemUrl = '/items/' + item.id;
-
-			return React.createElement(Item, {
-				key: item.id,
-				itemId: item.id,
-				price: item.price,
-				description: item.description,
-				path: item.path,
-				url: itemUrl });
-		});
-
 		return React.createElement(
-			'div',
-			{ className: 'items' },
-			itemsList
+			'a',
+			{ onClick: this.props.likeItem, className: this.state.likeButtonClassName },
+			'Like'
+		);
+	}
+});
+
+var ShareButton = React.createClass({
+	displayName: 'ShareButton',
+	render: function render() {
+		return React.createElement(
+			'a',
+			null,
+			'Share'
+		);
+	}
+});
+
+var CommentButton = React.createClass({
+	displayName: 'CommentButton',
+	render: function render() {
+		return React.createElement(
+			'a',
+			null,
+			'Comment'
 		);
 	}
 });
@@ -19080,10 +19094,17 @@ var Item = React.createClass({
 	displayName: 'Item',
 	getInitialState: function getInitialState() {
 		return {
-			likeCount: 0
+			likeCount: 0,
+			likeButtonClassName: ''
 		};
 	},
 	onLikeItem: function onLikeItem() {
+
+		console.log('onLikeItem()');
+
+		this.setState({ likeButtonClassName: 'liked' }, function () {
+			console.log(this.state.likeButtonClassName);
+		});
 
 		if (!window.signedIn) {
 			alert('You need to login in before you can like an item.');
@@ -19096,19 +19117,21 @@ var Item = React.createClass({
 			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') }
 		});
 
-		$.ajax({
-			url: postUrl,
-			type: 'POST',
-			data: {
-				id: this.props.itemId
-			},
-			success: function (data) {
-				console.log(data);
-			}.bind(this),
-			error: function error(xhr, status, err) {
-				console.log(status);
-			}
-		});
+		// $.ajax({
+		// 	url: postUrl,
+		// 	type: 'POST',
+		// 	data: {
+		// 		id: this.props.itemId
+		// 	},
+		// 	success: function(data) {	
+
+		// 		console.log(data);
+
+		// 	}.bind(this),
+		// 	error: function( xhr, status, err ) {
+		// 		console.log(err.toString());
+		// 	}
+		// });
 	},
 	render: function render() {
 
@@ -19141,7 +19164,7 @@ var Item = React.createClass({
 				React.createElement(
 					'div',
 					{ className: 'card-action' },
-					React.createElement(LikeButton, { itemId: this.props.itemId, likeItem: this.onLikeItem }),
+					React.createElement(LikeButton, { itemId: this.props.itemId, likeItem: this.onLikeItem, likeButtonClassName: this.state.likeButtonClassName }),
 					React.createElement(ShareButton, { itemId: this.props.itemId }),
 					React.createElement(CommentButton, { itemId: this.props.itemId })
 				)
@@ -19150,35 +19173,47 @@ var Item = React.createClass({
 	}
 });
 
-var LikeButton = React.createClass({
-	displayName: 'LikeButton',
+var Items = React.createClass({
+	displayName: 'Items',
+	getInitialState: function getInitialState() {
+		return {
+			items: []
+		};
+	},
+	fetchItems: function fetchItems() {
+		$.ajax({
+			url: this.props.url,
+			dataType: 'json',
+			cache: false,
+			success: function (data) {
+				this.setState({ items: data });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log('There was an error while making a request to ' + this.props.url);
+			}.bind(this)
+		});
+	},
+	componentDidMount: function componentDidMount() {
+		this.fetchItems();
+	},
 	render: function render() {
-		return React.createElement(
-			'a',
-			{ onClick: this.props.likeItem },
-			'Like'
-		);
-	}
-});
+		var itemsList = this.state.items.map(function (item) {
 
-var ShareButton = React.createClass({
-	displayName: 'ShareButton',
-	render: function render() {
-		return React.createElement(
-			'a',
-			null,
-			'Share'
-		);
-	}
-});
+			var itemUrl = '/items/' + item.id;
 
-var CommentButton = React.createClass({
-	displayName: 'CommentButton',
-	render: function render() {
+			return React.createElement(Item, {
+				key: item.id,
+				itemId: item.id,
+				price: item.price,
+				description: item.description,
+				path: item.path,
+				url: itemUrl });
+		});
+
 		return React.createElement(
-			'a',
-			null,
-			'Comment'
+			'div',
+			{ className: 'items' },
+			itemsList
 		);
 	}
 });

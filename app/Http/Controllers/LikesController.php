@@ -39,7 +39,7 @@ class LikesController extends Controller
     {
         $item = Item::findOrFail($request->id);
 
-        $item->like();
+        return $item->like();
     }
 
     /**
