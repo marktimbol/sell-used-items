@@ -19138,61 +19138,57 @@ var Item = React.createClass({
 	displayName: 'Item',
 	handleLikeItem: function handleLikeItem() {
 
-		// if( ! window.signedIn )
-		// {
-		// 	alert('You need to login in before you can like an item.');
-		// 	return;
-		// }
+		if (!window.signedIn) {
+			alert('You need to login in before you can like an item.');
+			return;
+		}
 
-		// var postUrl = '/likes';
+		var postUrl = '/api/likes';
 
-		//    $.ajaxSetup({
-		//        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
-		//    });
+		$.ajaxSetup({
+			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') }
+		});
 
-		// $.ajax({
-		// 	url: postUrl,
-		// 	type: 'POST',
-		// 	data: {
-		// 		id: this.props.itemId
-		// 	},
-		// 	success: function(data) {	
-		// 		console.log(data);
-		// 	}.bind(this),
-		// 	error: function( xhr, status, err ) {
-		// 		console.log(err.toString());
-		// 	}
-		// });
-
+		$.ajax({
+			url: postUrl,
+			type: 'POST',
+			data: {
+				id: this.props.itemId
+			},
+			success: function (data) {
+				console.log(data);
+			}.bind(this),
+			error: function error(xhr, status, err) {
+				console.log(err.toString());
+			}
+		});
 	},
 	handleUnlikeItem: function handleUnlikeItem() {
 
-		// if( ! window.signedIn )
-		// {
-		// 	alert('You need to login in before you can like an item.');
-		// 	return;
-		// }
+		if (!window.signedIn) {
+			alert('You need to login in before you can like an item.');
+			return;
+		}
 
-		// var postUrl = '/likes/'+this.props.itemId;
+		var postUrl = '/api/likes/' + this.props.itemId;
 
-		//    $.ajaxSetup({
-		//        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
-		//    });
+		$.ajaxSetup({
+			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') }
+		});
 
-		// $.ajax({
-		// 	url: postUrl,
-		// 	type: 'DELETE',
-		// 	data: {
-		// 		id: this.props.itemId
-		// 	},
-		// 	success: function(data) {	
-		// 		console.log(data);
-		// 	}.bind(this),
-		// 	error: function( xhr, status, err ) {
-		// 		console.log(err.toString());
-		// 	}
-		// });
-
+		$.ajax({
+			url: postUrl,
+			type: 'DELETE',
+			data: {
+				id: this.props.itemId
+			},
+			success: function (data) {
+				console.log(data);
+			}.bind(this),
+			error: function error(xhr, status, err) {
+				console.log(err.toString());
+			}
+		});
 	},
 	render: function render() {
 

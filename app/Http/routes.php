@@ -15,14 +15,10 @@ Route::group(['middleware' => 'web'], function () {
 
     Route::auth();
 
-    Route::resource('items', 'ItemsController');
- 
-    Route::resource('likes', 'LikesController');
- 
     Route::get('/', 'PagesController@home');
 
     Route::get('/logUser/{id}', 'PagesController@logUser');
-
+ 
 });
 
 Route::group(['middleware' => ['web', 'auth']], function() {
@@ -31,10 +27,13 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
 });
 
-Route::group(['middleware' => ['api']], function () {
-    
+Route::group(['middleware' => 'api'], function () {
+
 	Route::get('api/items', 'api\ItemsController@index');
 
 	Route::get('api/item/{id}/totalLikesCount', 'api\ItemsController@totalLikesCount');
 
+	Route::post('api/likes', 'api\LikesController@store');
+
+	Route::delete('api/likes/{id}', 'api\LikesController@destroy');
 });

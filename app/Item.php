@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
@@ -23,7 +23,7 @@ class Item extends Model
 
     public function unlike()
     {
-    	$this->likes()->where('user_id', Auth::id())->delete();
+    	return $this->likes()->where('user_id', Auth::id())->delete();
     }
 
     public function toggle()
@@ -38,7 +38,7 @@ class Item extends Model
 
     public function isLiked()
     {
-    	return !! $this->likes()->where('user_id', Auth::id)->count();
+    	return !! $this->likes()->where('user_id', Auth::id())->count();
     }
 
     public function getLikesCountAttribute()

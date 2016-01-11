@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Item;
-use App\Http\Requests;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Item;
+use Illuminate\Http\Request;
 
-class ItemsController extends Controller
+class LikesController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -16,8 +17,19 @@ class ItemsController extends Controller
      */
     public function index()
     {
-        return Item::all();
+        
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -26,7 +38,14 @@ class ItemsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $item = Item::findOrFail($request->id);
+ 
+        if( $item->like() )
+        {
+            return 'You liked an item.';
+        }
+
+        return 'There was an error liking a post.';
     }
 
     /**
@@ -37,7 +56,7 @@ class ItemsController extends Controller
      */
     public function show($id)
     {
-        
+        //
     }
 
     /**
@@ -71,13 +90,13 @@ class ItemsController extends Controller
      */
     public function destroy($id)
     {
-        
-    }
-
-    public function totalLikesCount($id)
-    {
         $item = Item::findOrFail($id);
 
-        return $item->likes_count;
-    }    
+        if( $item->unlike() )
+        {
+            return 'You unliked an item.';
+        }
+        return 'There was a problem unliking a post.';
+        
+    }
 }

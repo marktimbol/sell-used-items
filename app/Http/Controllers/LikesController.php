@@ -41,7 +41,7 @@ class LikesController extends Controller
 
         if( $item->like() )
         {
-            return 'success';
+            return 'You liked an item.';
         }
     }
 
@@ -91,7 +91,7 @@ class LikesController extends Controller
 
         if( $item->unlike() )
         {
-            return 'success';
+            return 'You unliked an item.';
         }
     }
 }

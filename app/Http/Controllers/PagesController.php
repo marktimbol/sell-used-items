@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class PagesController extends Controller
 {
@@ -15,10 +15,9 @@ class PagesController extends Controller
     	$user = [];	
     	$userLikes = [];
 
-    	if( Auth::user() )
+    	if( Auth::check() )
     	{
     		$user = Auth::user();
-
     		$userLikes = $user->likes;
     	}
 
