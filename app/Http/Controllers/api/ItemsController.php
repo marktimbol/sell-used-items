@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
 use App\Item;
 use App\Http\Requests;
@@ -18,17 +18,6 @@ class ItemsController extends Controller
     {
         return Item::all();
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -86,4 +75,11 @@ class ItemsController extends Controller
     {
         
     }
+
+    public function totalLikesCount($id)
+    {
+        $item = Item::findOrFail($id);
+
+        return $item->likes_count;
+    }    
 }

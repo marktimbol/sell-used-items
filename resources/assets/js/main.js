@@ -1,16 +1,60 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var LikeButton = React.createClass({
+var PeopleWhoLikedThis = React.createClass({
 
 	getInitialState() {
 		return {
-			likeButtonClassName: ''
+			totalLikesCount: 0
+		};
+	},
+
+	fetchTotalLikesCount() {
+
+		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
+
+		$.ajax({
+			url: url,
+			dataType: 'JSON',
+			type: 'GET',
+			success: function(data) {
+				this.setState({ totalLikesCount: data });
+			}.bind(this),
+			error: function(xhr, status, err)
+			{
+				console.log(err.toString());
+			}.bind(this)
+		});
+	},
+
+	componentDidMount() {
+		this.fetchTotalLikesCount();
+	},
+
+	render() {
+
+		var message = 'Be the first to like this post.';
+
+		if( this.state.totalLikesCount > 0 )
+		{
+			message = this.state.totalLikesCount + ' people like this';
+		}
+
+		return (
+			<p>{message}</p>
+		);
+	}	
+
+});
+
+var LikeButton = React.createClass({
+	getInitialState() {
+		return {
+			liked: false
 		}
 	},
 
 	setItemlikeButtonClassName() {
-
 		var props = this.props;
 
 		var itemId = $.grep(window.user.likes, function(item) {
@@ -19,45 +63,42 @@ var LikeButton = React.createClass({
 
 		if( itemId.length )
 		{
-			this.setState({ likeButtonClassName: 'liked' });
+			this.setState({ 
+				liked: true
+			});
 		}
 	},
 
 	componentDidMount() {
-
 		this.setItemlikeButtonClassName();
+	},
 
-		console.log(this.props.likeButtonClassName);
-
-		if( this.props.likeButtonClassName ) {
-			this.setState({ likeButtonClassName: this.props.likeButtonClassName });
+	handleClick() {
+		if( ! this.state.liked )
+		{
+			this.setState({ liked: ! this.state.liked });
+			this.props.onLikeItem();	
 		}
-
+		else
+		{
+			this.setState({ liked: ! this.state.liked });
+	        this.props.onUnlikeItem();	
+		}
 	},
 
 	render() {
 		return(
-			<a onClick={this.props.likeItem} className={this.state.likeButtonClassName}>Like</a>		
+			<a onClick={this.handleClick} className={this.state.liked ? 'liked' : ''}><i className="material-icons tiny">thumb_up</i> Like</a>		
 		);
 	}
 
 });
-
-var ShareButton = React.createClass({
-
-	render() {
-		return(
-			<a>Share</a>
-		);
-	}
-});
-
 
 var CommentButton = React.createClass({
 
 	render() {
 		return(
-			<a>Comment</a>
+			<a><i className="material-icons tiny">comment</i> Comment</a>
 		);
 	}
 
@@ -65,33 +106,20 @@ var CommentButton = React.createClass({
 
 var Item = React.createClass({
 
-	getInitialState() {
-		return {
-			likeCount: 0,
-			likeButtonClassName: ''
-		}
-	},
 
-	onLikeItem() {
+	handleLikeItem() {
 
-		console.log('onLikeItem()');
+		// if( ! window.signedIn )
+		// {
+		// 	alert('You need to login in before you can like an item.');
+		// 	return;
+		// }
 
-	    this.setState({ likeButtonClassName: 'liked' }, function() {
-	    	console.log(this.state.likeButtonClassName);
-	    });
+		// var postUrl = '/likes';
 
-
-		if( ! window.signedIn )
-		{
-			alert('You need to login in before you can like an item.');
-			return;
-		}
-
-		var postUrl = 'http://sell-used-items.dev/likes';
-
-	    $.ajaxSetup({
-	        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
-	    });
+	 //    $.ajaxSetup({
+	 //        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
+	 //    });
 
 		// $.ajax({
 		// 	url: postUrl,
@@ -100,9 +128,7 @@ var Item = React.createClass({
 		// 		id: this.props.itemId
 		// 	},
 		// 	success: function(data) {	
-
 		// 		console.log(data);
-
 		// 	}.bind(this),
 		// 	error: function( xhr, status, err ) {
 		// 		console.log(err.toString());
@@ -110,6 +136,36 @@ var Item = React.createClass({
 		// });
 
 	},
+
+	handleUnlikeItem() {
+
+		// if( ! window.signedIn )
+		// {
+		// 	alert('You need to login in before you can like an item.');
+		// 	return;
+		// }
+
+		// var postUrl = '/likes/'+this.props.itemId;
+
+	 //    $.ajaxSetup({
+	 //        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
+	 //    });
+
+		// $.ajax({
+		// 	url: postUrl,
+		// 	type: 'DELETE',
+		// 	data: {
+		// 		id: this.props.itemId
+		// 	},
+		// 	success: function(data) {	
+		// 		console.log(data);
+		// 	}.bind(this),
+		// 	error: function( xhr, status, err ) {
+		// 		console.log(err.toString());
+		// 	}
+		// });
+
+	},	
 
 	render() {
 
@@ -132,11 +188,11 @@ var Item = React.createClass({
 
 					<div className="card-action">
 
-						<LikeButton itemId={this.props.itemId } likeItem={this.onLikeItem} likeButtonClassName={this.state.likeButtonClassName} />
-					
-						<ShareButton itemId={this.props.itemId } />
+						<LikeButton itemId={this.props.itemId } onLikeItem={this.handleLikeItem} onUnlikeItem={this.handleUnlikeItem} />
 					
 						<CommentButton itemId={this.props.itemId} />
+					
+						<PeopleWhoLikedThis itemId={this.props.itemId} />
 					
 					</div>
 				</div>
@@ -197,6 +253,28 @@ var Items = React.createClass({
 		);
 	}
 
+});
+
+var LikeButtonTest = React.createClass({
+
+	getInitialState() {
+		return {
+			liked: false
+		};
+	},
+
+	handleClick() {
+		this.setState({ liked: ! this.state.liked });
+	},
+
+	render() {
+		var text = this.state.liked ? 'like' : 'haven\'t liked it';
+		return (
+			<p onClick={this.handleClick}>
+				You {text} this. Click to toggle.
+			</p>
+		);
+	}
 });
 
 

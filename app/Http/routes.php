@@ -21,6 +21,8 @@ Route::group(['middleware' => 'web'], function () {
  
     Route::get('/', 'PagesController@home');
 
+    Route::get('/logUser/{id}', 'PagesController@logUser');
+
 });
 
 Route::group(['middleware' => ['web', 'auth']], function() {
@@ -31,6 +33,8 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
 Route::group(['middleware' => ['api']], function () {
     
-	Route::get('api/items', 'ItemsController@index');
+	Route::get('api/items', 'api\ItemsController@index');
+
+	Route::get('api/item/{id}/totalLikesCount', 'api\ItemsController@totalLikesCount');
 
 });

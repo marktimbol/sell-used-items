@@ -23,7 +23,7 @@ class Item extends Model
 
     public function unlike()
     {
-    	$this->likes()->where('user_id', Auth::id)->delete();
+    	$this->likes()->where('user_id', Auth::id())->delete();
     }
 
     public function toggle()

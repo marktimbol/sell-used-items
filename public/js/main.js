@@ -19030,15 +19030,56 @@ module.exports = require('./lib/React');
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+var PeopleWhoLikedThis = React.createClass({
+	displayName: 'PeopleWhoLikedThis',
+	getInitialState: function getInitialState() {
+		return {
+			totalLikesCount: 0
+		};
+	},
+	fetchTotalLikesCount: function fetchTotalLikesCount() {
+
+		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
+
+		$.ajax({
+			url: url,
+			dataType: 'JSON',
+			type: 'GET',
+			success: function (data) {
+				this.setState({ totalLikesCount: data });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log(err.toString());
+			}.bind(this)
+		});
+	},
+	componentDidMount: function componentDidMount() {
+		this.fetchTotalLikesCount();
+	},
+	render: function render() {
+
+		var message = 'Be the first to like this post.';
+
+		if (this.state.totalLikesCount > 0) {
+			message = this.state.totalLikesCount + ' people like this';
+		}
+
+		return React.createElement(
+			'p',
+			null,
+			message
+		);
+	}
+});
+
 var LikeButton = React.createClass({
 	displayName: 'LikeButton',
 	getInitialState: function getInitialState() {
 		return {
-			likeButtonClassName: ''
+			liked: false
 		};
 	},
 	setItemlikeButtonClassName: function setItemlikeButtonClassName() {
-
 		var props = this.props;
 
 		var itemId = $.grep(window.user.likes, function (item) {
@@ -19046,35 +19087,33 @@ var LikeButton = React.createClass({
 		});
 
 		if (itemId.length) {
-			this.setState({ likeButtonClassName: 'liked' });
+			this.setState({
+				liked: true
+			});
 		}
 	},
 	componentDidMount: function componentDidMount() {
-
 		this.setItemlikeButtonClassName();
-
-		console.log(this.props.likeButtonClassName);
-
-		if (this.props.likeButtonClassName) {
-			this.setState({ likeButtonClassName: this.props.likeButtonClassName });
+	},
+	handleClick: function handleClick() {
+		if (!this.state.liked) {
+			this.setState({ liked: !this.state.liked });
+			this.props.onLikeItem();
+		} else {
+			this.setState({ liked: !this.state.liked });
+			this.props.onUnlikeItem();
 		}
 	},
 	render: function render() {
 		return React.createElement(
 			'a',
-			{ onClick: this.props.likeItem, className: this.state.likeButtonClassName },
-			'Like'
-		);
-	}
-});
-
-var ShareButton = React.createClass({
-	displayName: 'ShareButton',
-	render: function render() {
-		return React.createElement(
-			'a',
-			null,
-			'Share'
+			{ onClick: this.handleClick, className: this.state.liked ? 'liked' : '' },
+			React.createElement(
+				'i',
+				{ className: 'material-icons tiny' },
+				'thumb_up'
+			),
+			' Like'
 		);
 	}
 });
@@ -19085,37 +19124,31 @@ var CommentButton = React.createClass({
 		return React.createElement(
 			'a',
 			null,
-			'Comment'
+			React.createElement(
+				'i',
+				{ className: 'material-icons tiny' },
+				'comment'
+			),
+			' Comment'
 		);
 	}
 });
 
 var Item = React.createClass({
 	displayName: 'Item',
-	getInitialState: function getInitialState() {
-		return {
-			likeCount: 0,
-			likeButtonClassName: ''
-		};
-	},
-	onLikeItem: function onLikeItem() {
+	handleLikeItem: function handleLikeItem() {
 
-		console.log('onLikeItem()');
+		// if( ! window.signedIn )
+		// {
+		// 	alert('You need to login in before you can like an item.');
+		// 	return;
+		// }
 
-		this.setState({ likeButtonClassName: 'liked' }, function () {
-			console.log(this.state.likeButtonClassName);
-		});
+		// var postUrl = '/likes';
 
-		if (!window.signedIn) {
-			alert('You need to login in before you can like an item.');
-			return;
-		}
-
-		var postUrl = 'http://sell-used-items.dev/likes';
-
-		$.ajaxSetup({
-			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') }
-		});
+		//    $.ajaxSetup({
+		//        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
+		//    });
 
 		// $.ajax({
 		// 	url: postUrl,
@@ -19124,14 +19157,42 @@ var Item = React.createClass({
 		// 		id: this.props.itemId
 		// 	},
 		// 	success: function(data) {	
-
 		// 		console.log(data);
-
 		// 	}.bind(this),
 		// 	error: function( xhr, status, err ) {
 		// 		console.log(err.toString());
 		// 	}
 		// });
+
+	},
+	handleUnlikeItem: function handleUnlikeItem() {
+
+		// if( ! window.signedIn )
+		// {
+		// 	alert('You need to login in before you can like an item.');
+		// 	return;
+		// }
+
+		// var postUrl = '/likes/'+this.props.itemId;
+
+		//    $.ajaxSetup({
+		//        headers: { 'X-CSRF-Token' : $('meta[name="token"]').attr('content') }
+		//    });
+
+		// $.ajax({
+		// 	url: postUrl,
+		// 	type: 'DELETE',
+		// 	data: {
+		// 		id: this.props.itemId
+		// 	},
+		// 	success: function(data) {	
+		// 		console.log(data);
+		// 	}.bind(this),
+		// 	error: function( xhr, status, err ) {
+		// 		console.log(err.toString());
+		// 	}
+		// });
+
 	},
 	render: function render() {
 
@@ -19164,9 +19225,9 @@ var Item = React.createClass({
 				React.createElement(
 					'div',
 					{ className: 'card-action' },
-					React.createElement(LikeButton, { itemId: this.props.itemId, likeItem: this.onLikeItem, likeButtonClassName: this.state.likeButtonClassName }),
-					React.createElement(ShareButton, { itemId: this.props.itemId }),
-					React.createElement(CommentButton, { itemId: this.props.itemId })
+					React.createElement(LikeButton, { itemId: this.props.itemId, onLikeItem: this.handleLikeItem, onUnlikeItem: this.handleUnlikeItem }),
+					React.createElement(CommentButton, { itemId: this.props.itemId }),
+					React.createElement(PeopleWhoLikedThis, { itemId: this.props.itemId })
 				)
 			)
 		);
@@ -19214,6 +19275,28 @@ var Items = React.createClass({
 			'div',
 			{ className: 'items' },
 			itemsList
+		);
+	}
+});
+
+var LikeButtonTest = React.createClass({
+	displayName: 'LikeButtonTest',
+	getInitialState: function getInitialState() {
+		return {
+			liked: false
+		};
+	},
+	handleClick: function handleClick() {
+		this.setState({ liked: !this.state.liked });
+	},
+	render: function render() {
+		var text = this.state.liked ? 'like' : 'haven\'t liked it';
+		return React.createElement(
+			'p',
+			{ onClick: this.handleClick },
+			'You ',
+			text,
+			' this. Click to toggle.'
 		);
 	}
 });

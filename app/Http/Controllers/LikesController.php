@@ -39,7 +39,10 @@ class LikesController extends Controller
     {
         $item = Item::findOrFail($request->id);
 
-        return $item->like();
+        if( $item->like() )
+        {
+            return 'success';
+        }
     }
 
     /**
@@ -84,6 +87,11 @@ class LikesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $item = Item::findOrFail($id);
+
+        if( $item->unlike() )
+        {
+            return 'success';
+        }
     }
 }
