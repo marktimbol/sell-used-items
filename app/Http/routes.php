@@ -27,7 +27,7 @@ Route::group(['middleware' => ['web', 'auth']], function() {
 
 });
 
-Route::group(['middleware' => 'api'], function () {
+Route::group(['middleware' => 'web'], function () {
 
 	Route::get('api/items', 'api\ItemsController@index');
 
