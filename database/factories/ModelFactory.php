@@ -26,6 +26,6 @@ $factory->define(App\Item::class, function (Faker\Generator $faker) {
     	'user_id'	=> 1,
         'price' => $faker->randomNumber(2),
         'description' => $faker->paragraph,
-        'path' => 'http://placeimg.com/640/480/animals'
+        'path' => 'http://placehold.it/640x480'
     ];
 });

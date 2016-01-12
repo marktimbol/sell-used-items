@@ -1,8 +1,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var PeopleWhoLikedThis = React.createClass({
-
+class PeopleWhoLikedThis extends React.Component
+{
 	getInitialState() {
 		return {
 			totalLikesCount: 0
@@ -45,9 +45,10 @@ var PeopleWhoLikedThis = React.createClass({
 		);
 	}	
 
-});
+}
 
-var LikeButton = React.createClass({
+class LikeButton extends React.Component
+{
 	getInitialState() {
 		return {
 			liked: false
@@ -92,21 +93,19 @@ var LikeButton = React.createClass({
 		);
 	}
 
-});
+}
 
-var CommentButton = React.createClass({
-
+class CommentButton extends React.Component
+{
 	render() {
 		return(
 			<a><i className="material-icons tiny">comment</i> Comment</a>
 		);
 	}
+}
 
-});
-
-var Item = React.createClass({
-
-
+class Item extends React.Component
+{
 	handleLikeItem() {
 
 		if( ! window.signedIn )
@@ -201,11 +200,11 @@ var Item = React.createClass({
 
 			);
 	}
-});
+}
 
 
-var Items = React.createClass({
-
+class Items = React.Component
+{
 	getInitialState() {
 		return {
 			items: []
@@ -253,7 +252,7 @@ var Items = React.createClass({
 		);
 	}
 
-});
+}
 
 var LikeButtonTest = React.createClass({
 

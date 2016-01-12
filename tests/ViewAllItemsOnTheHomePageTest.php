@@ -4,16 +4,19 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ExampleTest extends TestCase
+class ViewAllItemsOnTheHomePage extends TestCase
 {
+    use DatabaseMigrations;
     /**
      * A basic functional test example.
      *
      * @return void
      */
-    public function testBasicExample()
+    public function testViewAllItemsOnTheHomePage()
     {
+        $item = factory(App\Item::class)->create(['description' => 'Item description']);
+
         $this->visit('/')
-             ->see('Laravel 5');
+             ->see('Item description');
     }
 }
