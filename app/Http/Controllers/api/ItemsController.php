@@ -1,84 +1,67 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
+use App\Comment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Item;
 use Illuminate\Http\Request;
-use Auth;
 
 class ItemsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function all()
     {
         return Item::all();
     }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        
-    }
-
+  
     public function totalLikesCount($id)
     {
         $item = Item::findOrFail($id);
 
         return $item->likes_count;
     }    
+
+    public function like($item, $userId)
+    {
+        $item = Item::findOrFail($item);
+ 
+        if( $item->like($userId) )
+        {
+            return 'You liked an item.';
+        }
+
+        return 'There was an error liking a post.';
+    }
+
+    public function unlike($item, $userId)
+    {
+        $item = Item::findOrFail($item);
+
+        if( $item->unlike($userId) )
+        {
+            return 'You unliked an item.';
+        }
+        return 'There was a problem unliking a post.';
+    }
+
+    public function comments($item)
+    {
+        $item = Item::findOrFail(1);
+
+        return $item->comments;
+
+    }
+
+    public function storeComment($itemId, Request $request)
+    {
+        $item = Item::findOrFail($itemId);
+
+        $comment = new Comment([
+            'user_id'   => $request->userId,
+            'message'   => $request->message
+            ]);
+
+        $item->comments()->save($comment);
+    }
 }

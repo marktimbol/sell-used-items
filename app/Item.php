@@ -14,31 +14,31 @@ class Item extends Model
     	return $this->morphMany(Like::class, 'likeable');
     }
 
-    public function like()
+    public function comments()
     {
-    	$like = new Like(['user_id' => Auth::id()]);
+        return $this->hasMany(Comment::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function like($userId)
+    {
+    	$like = new Like(['user_id' => $userId]);
 
     	return $this->likes()->save($like);
     }
 
-    public function unlike()
+    public function unlike($userId)
     {
-    	return $this->likes()->where('user_id', Auth::id())->delete();
+    	return $this->likes()->where('user_id', $userId)->delete();
     }
 
-    public function toggle()
+    public function isLiked($userId)
     {
-    	if( $this->isLiked() )
-    	{
-    		return $this->unlike();
-    	}
-
-    	return $this->like();
-    }
-
-    public function isLiked()
-    {
-    	return !! $this->likes()->where('user_id', Auth::id())->count();
+    	return !! $this->likes()->where('user_id', $userId)->count();
     }
 
     public function getLikesCountAttribute()

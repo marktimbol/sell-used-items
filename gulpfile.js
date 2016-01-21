@@ -13,33 +13,25 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
 
-    mix.sass('app.scss', 'resources/assets/css/app.css')
+    mix.sass('public.scss', 'resources/assets/css/public.css')
 
     	.styles([
-    		
     		'../../../bower_components/Materialize/dist/css/materialize.css',
-    		
-    		'app.css'
-    		
+    		'public.css'
     		], 'public/css/public.css')
 
-
     	.scripts([
-
     		'../../../bower_components/jquery/dist/jquery.js',
-
-    		'../../../bower_components/Materialize/dist/js/materialize.js'
-
+    		'../../../bower_components/Materialize/dist/js/materialize.js',
+            'main.js'
     		], 'public/js/public.js')
 
-    	.browserify('main.js')
+    	.browserify('components/Items.js')
+        .browserify('components/ItemWithComments.js')
 
-    	.version([
-    		
+    	.version([	
     		'public/css/public.css',
-    		
     		'public/js/public.js'
-    		
     		]);
 
 });

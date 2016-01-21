@@ -19027,105 +19027,16 @@ module.exports = require('./lib/React');
 },{"./lib/React":53}],159:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 var React = require('react');
-var ReactDOM = require('react-dom');
-
-var PeopleWhoLikedThis = React.createClass({
-	displayName: 'PeopleWhoLikedThis',
-	getInitialState: function getInitialState() {
-		return {
-			totalLikesCount: 0
-		};
-	},
-	fetchTotalLikesCount: function fetchTotalLikesCount() {
-
-		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
-
-		$.ajax({
-			url: url,
-			dataType: 'JSON',
-			type: 'GET',
-			success: function (data) {
-				this.setState({ totalLikesCount: data });
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log(err.toString());
-			}.bind(this)
-		});
-	},
-	componentDidMount: function componentDidMount() {
-		this.fetchTotalLikesCount();
-	},
-	render: function render() {
-
-		var message = 'Be the first to like this post.';
-
-		if (this.state.totalLikesCount > 0) {
-			message = this.state.totalLikesCount + ' people like this';
-		}
-
-		return React.createElement(
-			'p',
-			null,
-			message
-		);
-	}
-});
-
-var LikeButton = React.createClass({
-	displayName: 'LikeButton',
-	getInitialState: function getInitialState() {
-		return {
-			liked: false
-		};
-	},
-	setItemlikeButtonClassName: function setItemlikeButtonClassName() {
-		var props = this.props;
-
-		var itemId = $.grep(window.user.likes, function (item) {
-			return item.likeable_id == props.itemId;
-		});
-
-		if (itemId.length) {
-			this.setState({
-				liked: true
-			});
-		}
-	},
-	componentDidMount: function componentDidMount() {
-		this.setItemlikeButtonClassName();
-	},
-	handleClick: function handleClick() {
-
-		if (!window.signedIn) {
-			alert('You need to login in before you can make this action.');
-			return false;
-		}
-
-		if (!this.state.liked) {
-			this.setState({ liked: !this.state.liked });
-			this.props.onLikeItem();
-		} else {
-			this.setState({ liked: !this.state.liked });
-			this.props.onUnlikeItem();
-		}
-	},
-	render: function render() {
-		return React.createElement(
-			'a',
-			{ onClick: this.handleClick, className: this.state.liked ? 'liked' : '' },
-			React.createElement(
-				'i',
-				{ className: 'material-icons tiny' },
-				'thumb_up'
-			),
-			' Like'
-		);
-	}
-});
 
 var CommentButton = React.createClass({
 	displayName: 'CommentButton',
+	handleClick: function handleClick() {
+		alert('TODO here.');
+	},
 	render: function render() {
 		return React.createElement(
 			'a',
@@ -19140,22 +19051,78 @@ var CommentButton = React.createClass({
 	}
 });
 
+exports.default = CommentButton;
+
+},{"react":158}],160:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _TotalLikesCount = require('./TotalLikesCount');
+
+var _TotalLikesCount2 = _interopRequireDefault(_TotalLikesCount);
+
+var _LikeButton = require('./LikeButton');
+
+var _LikeButton2 = _interopRequireDefault(_LikeButton);
+
+var _CommentButton = require('./CommentButton');
+
+var _CommentButton2 = _interopRequireDefault(_CommentButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var React = require('react');
+
 var Item = React.createClass({
 	displayName: 'Item',
-	handleLikeItem: function handleLikeItem() {
+	getInitialState: function getInitialState() {
+		return {
+			liked: false,
+			likesCount: 0,
+			comments: [1, 2, 3]
+		};
+	},
+	setLikeButtonClass: function setLikeButtonClass() {
+		var props = this.props;
 
-		var postUrl = '/api/item/' + this.props.itemId + '/like/' + window.user.info.id;
+		var itemId = $.grep(window.user.likes, function (item) {
+			return item.likeable_id == props.itemId;
+		});
+
+		if (itemId.length) {
+			this.setState({ liked: true }, function () {});
+		}
+	},
+	fetchLikesCount: function fetchLikesCount() {
+
+		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
 
 		$.ajax({
-			url: postUrl,
+			url: url,
+			dataType: 'JSON',
+			type: 'GET',
+			success: function (data) {
+				this.setState({ likesCount: data });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log(err.toString());
+			}.bind(this)
+		});
+	},
+	handleLikeItem: function handleLikeItem() {
+
+		var itemUrl = '/api/item/' + this.props.itemId + '/like/' + window.user.info.id;
+
+		$.ajax({
+			url: itemUrl,
 			type: 'POST',
-			// data: {
-			// 	id: this.props.itemId,
-			// 	userId: window.user.info.id
-			// },
 			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') },
 			success: function (data) {
-				console.log(data);
+				this.fetchLikesCount();
+				this.setState({ liked: true });
 			}.bind(this),
 			error: function error(xhr, status, err) {
 				console.log(err.toString());
@@ -19164,59 +19131,72 @@ var Item = React.createClass({
 	},
 	handleUnlikeItem: function handleUnlikeItem() {
 
-		var postUrl = '/api/item/' + this.props.itemId + '/unlike/' + window.user.info.id;
+		var itemUrl = '/api/item/' + this.props.itemId + '/unlike/' + window.user.info.id;
 
 		$.ajax({
-			url: postUrl,
+			url: itemUrl,
 			type: 'DELETE',
 			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') },
 			success: function (data) {
-				console.log(data);
+				this.fetchLikesCount();
+				this.setState({ liked: false });
 			}.bind(this),
 			error: function error(xhr, status, err) {
 				console.log(err.toString());
 			}
 		});
 	},
+	componentDidMount: function componentDidMount() {
+		this.setLikeButtonClass();
+		this.fetchLikesCount();
+	},
 	render: function render() {
-
 		return React.createElement(
 			'div',
-			{ className: 'col s6 m4' },
+			{ className: 'card' },
 			React.createElement(
 				'div',
-				{ className: 'card' },
+				{ className: 'card-image' },
 				React.createElement(
-					'div',
-					{ className: 'card-image' },
-					React.createElement(
-						'a',
-						{ href: this.props.url },
-						React.createElement('img', { src: this.props.path })
-					),
-					React.createElement(
-						'span',
-						{ className: 'card-title' },
-						'AED ',
-						this.props.price
-					)
-				),
-				React.createElement(
-					'div',
-					{ className: 'card-content' },
-					this.props.description
-				),
-				React.createElement(
-					'div',
-					{ className: 'card-action' },
-					React.createElement(LikeButton, { itemId: this.props.itemId, onLikeItem: this.handleLikeItem, onUnlikeItem: this.handleUnlikeItem }),
-					React.createElement(CommentButton, { itemId: this.props.itemId }),
-					React.createElement(PeopleWhoLikedThis, { itemId: this.props.itemId })
+					'a',
+					{ href: this.props.url },
+					React.createElement('img', { src: this.props.path, alt: this.props.description, title: this.props.description })
 				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'card-content' },
+				this.props.description,
+				React.createElement(
+					'div',
+					{ className: 'Item__counters' },
+					React.createElement('br', null),
+					React.createElement(_TotalLikesCount2.default, { count: this.state.likesCount })
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'card-action' },
+				React.createElement(_LikeButton2.default, { onLikeItem: this.handleLikeItem, onUnlikeItem: this.handleUnlikeItem, liked: this.state.liked }),
+				React.createElement(_CommentButton2.default, null)
 			)
 		);
 	}
 });
+
+exports.default = Item;
+
+},{"./CommentButton":159,"./LikeButton":162,"./TotalLikesCount":163,"react":158}],161:[function(require,module,exports){
+'use strict';
+
+var _Item = require('./Item');
+
+var _Item2 = _interopRequireDefault(_Item);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var React = require('react');
+var ReactDOM = require('react-dom');
 
 var Items = React.createClass({
 	displayName: 'Items',
@@ -19243,29 +19223,96 @@ var Items = React.createClass({
 	},
 	render: function render() {
 
-		var itemsList = this.state.items.map(function (item) {
+		var items = this.state.items.map(function (item) {
 
 			var itemUrl = '/items/' + item.id;
 
-			return React.createElement(Item, {
-				key: item.id,
-				itemId: item.id,
-				price: item.price,
-				description: item.description,
-				path: item.path,
-				url: itemUrl });
+			return React.createElement(
+				'div',
+				{ className: 'col s6 m4' },
+				React.createElement(_Item2.default, { key: item.id,
+					itemId: item.id,
+					path: item.path,
+					description: item.description,
+					url: itemUrl })
+			);
 		});
 
 		return React.createElement(
 			'div',
-			{ className: 'items' },
-			itemsList
+			{ className: 'Items' },
+			items
 		);
 	}
 });
 
-ReactDOM.render(React.createElement(Items, { url: '/api/items' }), document.getElementById('itemsList'));
+ReactDOM.render(React.createElement(Items, { url: '/api/items' }), document.getElementById('Items'));
 
-},{"react":158,"react-dom":29}]},{},[159]);
+},{"./Item":160,"react":158,"react-dom":29}],162:[function(require,module,exports){
+'use strict';
 
-//# sourceMappingURL=main.js.map
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
+
+var LikeButton = React.createClass({
+	displayName: 'LikeButton',
+	handleClick: function handleClick() {
+		if (!window.signedIn) {
+			alert('You need to login in before you can make this action.');
+			return false;
+		}
+
+		if (!this.props.liked) {
+			this.props.onLikeItem();
+		} else {
+			this.props.onUnlikeItem();
+		}
+	},
+	render: function render() {
+		return React.createElement(
+			'a',
+			{ onClick: this.handleClick, className: this.props.liked ? 'liked' : '' },
+			React.createElement(
+				'i',
+				{ className: 'material-icons tiny' },
+				'thumb_up'
+			),
+			' Like'
+		);
+	}
+});
+
+exports.default = LikeButton;
+
+},{"react":158}],163:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
+
+var TotalLikesCount = React.createClass({
+	displayName: 'TotalLikesCount',
+	render: function render() {
+		var message = 'Be the first to like this post.';
+
+		if (this.props.count > 0) {
+			message = this.props.count + ' people like this';
+		}
+
+		return React.createElement(
+			'p',
+			null,
+			message
+		);
+	}
+});
+
+exports.default = TotalLikesCount;
+
+},{"react":158}]},{},[161]);
+
+//# sourceMappingURL=Items.js.map

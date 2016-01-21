@@ -12,32 +12,14 @@ class PagesController extends Controller
 {
     public function home()
     {
-    	$user = [];	
-    	$userLikes = [];
-
-    	if( Auth::check() )
-    	{
-    		$user = Auth::user();
-    		$userLikes = $user->likes;
-    	}
-
-    	\JavaScript::put([
-    		'signedIn' => $user ? true : false,
-    		'user' => [
-    			'likes'	=> $userLikes
-    		]
-    	]);
+        \JavaScript::put([
+            'signedIn' => Auth::check() ? true : false,
+            'user' => [
+                'info'  => Auth::check() ? Auth::user() : [],
+                'likes' => Auth::check() ? Auth::user()->likes : []
+            ]
+        ]);
 
     	return view('public.home');
-    }
-
-    public function logUser($id = null)
-    {
-    	if( $id )
-    	{
-    		return Auth::loginUsingId($id);
-    	}
-
-    	return Auth::loginUsingId(1);
     }
 }

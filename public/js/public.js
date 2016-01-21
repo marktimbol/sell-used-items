@@ -16039,4 +16039,7 @@ Picker.extend( 'pickadate', DatePicker )
       }
     }; // Plugin end
 }( jQuery ));
+$(document).ready(function(){
+	// $('.materialboxed').materialbox();
+});
 //# sourceMappingURL=public.js.map

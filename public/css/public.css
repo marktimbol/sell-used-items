@@ -11258,6 +11258,10 @@ button.picker__today:focus, button.picker__clear:focus, button.picker__close:foc
 a {
   cursor: pointer; }
 
+hr {
+  margin-top: 20px;
+  border: 1px solid #ddd; }
+
 .card .card-image .card-title {
   right: 0;
   left: inherit;
@@ -11270,6 +11274,48 @@ a {
     font-weight: bold;
     color: #5890ff !important; }
 
-/*# sourceMappingURL=app.css.map */
+.Item {
+  margin-top: 20px;
+  overflow: hidden; }
+  .Item .card {
+    box-shadow: none; }
+    .Item .card .card-content {
+      padding: 20px 5px; }
+    .Item .card .card-action {
+      padding: 20px 5px; }
+
+.Item__user__name {
+  font-size: 16px; }
+
+.Item__counters p {
+  color: #9197a3; }
+
+.Item__actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd; }
+  .Item__actions a {
+    color: #7f7f7f !important;
+    margin-right: 20px; }
+    .Item__actions a.liked {
+      color: #5890ff !important; }
+
+.Item__comments .input-field label {
+  left: 0; }
+
+.Item__comments__title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd; }
+
+.Item__comment {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px; }
+
+.Item__comment__name {
+  font-size: 16px; }
+
+/*# sourceMappingURL=public.css.map */
 
 /*# sourceMappingURL=public.css.map */

@@ -19025,107 +19025,62 @@ module.exports = validateDOMNesting;
 module.exports = require('./lib/React');
 
 },{"./lib/React":53}],159:[function(require,module,exports){
-'use strict';
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 var React = require('react');
-var ReactDOM = require('react-dom');
 
-var PeopleWhoLikedThis = React.createClass({
-	displayName: 'PeopleWhoLikedThis',
-	getInitialState: function getInitialState() {
-		return {
-			totalLikesCount: 0
-		};
-	},
-	fetchTotalLikesCount: function fetchTotalLikesCount() {
-
-		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
-
-		$.ajax({
-			url: url,
-			dataType: 'JSON',
-			type: 'GET',
-			success: function (data) {
-				this.setState({ totalLikesCount: data });
-			}.bind(this),
-			error: function (xhr, status, err) {
-				console.log(err.toString());
-			}.bind(this)
-		});
-	},
-	componentDidMount: function componentDidMount() {
-		this.fetchTotalLikesCount();
-	},
-	render: function render() {
-
-		var message = 'Be the first to like this post.';
-
-		if (this.state.totalLikesCount > 0) {
-			message = this.state.totalLikesCount + ' people like this';
-		}
-
-		return React.createElement(
-			'p',
-			null,
-			message
-		);
-	}
-});
-
-var LikeButton = React.createClass({
-	displayName: 'LikeButton',
-	getInitialState: function getInitialState() {
-		return {
-			liked: false
-		};
-	},
-	setItemlikeButtonClassName: function setItemlikeButtonClassName() {
-		var props = this.props;
-
-		var itemId = $.grep(window.user.likes, function (item) {
-			return item.likeable_id == props.itemId;
-		});
-
-		if (itemId.length) {
-			this.setState({
-				liked: true
-			});
-		}
-	},
-	componentDidMount: function componentDidMount() {
-		this.setItemlikeButtonClassName();
-	},
-	handleClick: function handleClick() {
-
-		if (!window.signedIn) {
-			alert('You need to login in before you can make this action.');
-			return false;
-		}
-
-		if (!this.state.liked) {
-			this.setState({ liked: !this.state.liked });
-			this.props.onLikeItem();
-		} else {
-			this.setState({ liked: !this.state.liked });
-			this.props.onUnlikeItem();
-		}
-	},
+var Comment = React.createClass({
+	displayName: "Comment",
 	render: function render() {
 		return React.createElement(
-			'a',
-			{ onClick: this.handleClick, className: this.state.liked ? 'liked' : '' },
+			"div",
+			{ className: "Item__comment" },
 			React.createElement(
-				'i',
-				{ className: 'material-icons tiny' },
-				'thumb_up'
-			),
-			' Like'
+				"div",
+				{ className: "row" },
+				React.createElement(
+					"div",
+					{ className: "col s2" },
+					React.createElement("img", { src: "http://materializecss.com/images/yuna.jpg", alt: "", className: "circle responsive-img" })
+				),
+				React.createElement(
+					"div",
+					{ className: "col s10" },
+					React.createElement(
+						"h6",
+						{ className: "Item__comment__name" },
+						this.props.user
+					),
+					React.createElement(
+						"p",
+						null,
+						this.props.message
+					)
+				)
+			)
 		);
 	}
 });
+
+exports.default = Comment;
+
+},{"react":158}],160:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
 
 var CommentButton = React.createClass({
 	displayName: 'CommentButton',
+	handleClick: function handleClick() {
+		alert('TODO here.');
+	},
 	render: function render() {
 		return React.createElement(
 			'a',
@@ -19140,22 +19095,136 @@ var CommentButton = React.createClass({
 	}
 });
 
+exports.default = CommentButton;
+
+},{"react":158}],161:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var React = require('react');
+
+var CommentForm = React.createClass({
+	displayName: 'CommentForm',
+	getInitialState: function getInitialState() {
+		return {
+			message: ''
+		};
+	},
+	handleChange: function handleChange(e) {
+		e.preventDefault();
+		this.setState({ message: e.target.value });
+	},
+	handleSubmit: function handleSubmit(e) {
+		e.preventDefault();
+		this.props.onCommentSubmit(this.state.message);
+		this.setState({ message: '' });
+	},
+	render: function render() {
+		return React.createElement(
+			'div',
+			{ className: 'row' },
+			React.createElement(
+				'div',
+				{ className: 'col s12' },
+				React.createElement(
+					'form',
+					{ method: 'POST', onSubmit: this.handleSubmit },
+					React.createElement(
+						'div',
+						{ className: 'input-field' },
+						React.createElement('textarea', { value: this.state.message, onChange: this.handleChange, className: 'materialize-textarea' }),
+						React.createElement(
+							'label',
+							null,
+							'Write your comment'
+						)
+					),
+					React.createElement(
+						'button',
+						{ type: 'submit', className: 'btn btn-waves-effect btn-waves-light' },
+						'Submit comment'
+					)
+				)
+			)
+		);
+	}
+});
+
+exports.default = CommentForm;
+
+},{"react":158}],162:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _TotalLikesCount = require('./TotalLikesCount');
+
+var _TotalLikesCount2 = _interopRequireDefault(_TotalLikesCount);
+
+var _LikeButton = require('./LikeButton');
+
+var _LikeButton2 = _interopRequireDefault(_LikeButton);
+
+var _CommentButton = require('./CommentButton');
+
+var _CommentButton2 = _interopRequireDefault(_CommentButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var React = require('react');
+
 var Item = React.createClass({
 	displayName: 'Item',
-	handleLikeItem: function handleLikeItem() {
+	getInitialState: function getInitialState() {
+		return {
+			liked: false,
+			likesCount: 0,
+			comments: [1, 2, 3]
+		};
+	},
+	setLikeButtonClass: function setLikeButtonClass() {
+		var props = this.props;
 
-		var postUrl = '/api/item/' + this.props.itemId + '/like/' + window.user.info.id;
+		var itemId = $.grep(window.user.likes, function (item) {
+			return item.likeable_id == props.itemId;
+		});
+
+		if (itemId.length) {
+			this.setState({ liked: true }, function () {});
+		}
+	},
+	fetchLikesCount: function fetchLikesCount() {
+
+		var url = '/api/item/' + this.props.itemId + '/totalLikesCount';
 
 		$.ajax({
-			url: postUrl,
+			url: url,
+			dataType: 'JSON',
+			type: 'GET',
+			success: function (data) {
+				this.setState({ likesCount: data });
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log(err.toString());
+			}.bind(this)
+		});
+	},
+	handleLikeItem: function handleLikeItem() {
+
+		var itemUrl = '/api/item/' + this.props.itemId + '/like/' + window.user.info.id;
+
+		$.ajax({
+			url: itemUrl,
 			type: 'POST',
-			// data: {
-			// 	id: this.props.itemId,
-			// 	userId: window.user.info.id
-			// },
 			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') },
 			success: function (data) {
-				console.log(data);
+				this.fetchLikesCount();
+				this.setState({ liked: true });
 			}.bind(this),
 			error: function error(xhr, status, err) {
 				console.log(err.toString());
@@ -19164,108 +19233,299 @@ var Item = React.createClass({
 	},
 	handleUnlikeItem: function handleUnlikeItem() {
 
-		var postUrl = '/api/item/' + this.props.itemId + '/unlike/' + window.user.info.id;
+		var itemUrl = '/api/item/' + this.props.itemId + '/unlike/' + window.user.info.id;
 
 		$.ajax({
-			url: postUrl,
+			url: itemUrl,
 			type: 'DELETE',
 			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') },
 			success: function (data) {
-				console.log(data);
+				this.fetchLikesCount();
+				this.setState({ liked: false });
 			}.bind(this),
 			error: function error(xhr, status, err) {
 				console.log(err.toString());
 			}
 		});
 	},
+	componentDidMount: function componentDidMount() {
+		this.setLikeButtonClass();
+		this.fetchLikesCount();
+	},
 	render: function render() {
-
 		return React.createElement(
 			'div',
-			{ className: 'col s6 m4' },
+			{ className: 'card' },
 			React.createElement(
 				'div',
-				{ className: 'card' },
+				{ className: 'card-image' },
+				React.createElement(
+					'a',
+					{ href: this.props.url },
+					React.createElement('img', { src: this.props.path, alt: this.props.description, title: this.props.description })
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'card-content' },
+				this.props.description,
 				React.createElement(
 					'div',
-					{ className: 'card-image' },
+					{ className: 'Item__counters' },
+					React.createElement('br', null),
+					React.createElement(_TotalLikesCount2.default, { count: this.state.likesCount })
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'card-action' },
+				React.createElement(_LikeButton2.default, { onLikeItem: this.handleLikeItem, onUnlikeItem: this.handleUnlikeItem, liked: this.state.liked }),
+				React.createElement(_CommentButton2.default, null)
+			)
+		);
+	}
+});
+
+exports.default = Item;
+
+},{"./CommentButton":160,"./LikeButton":165,"./TotalLikesCount":166,"react":158}],163:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
+
+var ItemOwner = React.createClass({
+	displayName: "ItemOwner",
+	render: function render() {
+		return React.createElement(
+			"div",
+			{ className: "Item__user" },
+			React.createElement(
+				"div",
+				{ className: "row valign-wrapper" },
+				React.createElement(
+					"div",
+					{ className: "col s2" },
+					React.createElement("img", { src: "http://materializecss.com/images/yuna.jpg", alt: "", className: "circle responsive-img" })
+				),
+				React.createElement(
+					"div",
+					{ className: "col s10" },
 					React.createElement(
-						'a',
-						{ href: this.props.url },
-						React.createElement('img', { src: this.props.path })
-					),
-					React.createElement(
-						'span',
-						{ className: 'card-title' },
-						'AED ',
-						this.props.price
+						"h6",
+						{ className: "Item__user__name" },
+						"Full Name"
 					)
-				),
-				React.createElement(
-					'div',
-					{ className: 'card-content' },
-					this.props.description
-				),
-				React.createElement(
-					'div',
-					{ className: 'card-action' },
-					React.createElement(LikeButton, { itemId: this.props.itemId, onLikeItem: this.handleLikeItem, onUnlikeItem: this.handleUnlikeItem }),
-					React.createElement(CommentButton, { itemId: this.props.itemId }),
-					React.createElement(PeopleWhoLikedThis, { itemId: this.props.itemId })
 				)
 			)
 		);
 	}
 });
 
-var Items = React.createClass({
-	displayName: 'Items',
+exports.default = ItemOwner;
+
+},{"react":158}],164:[function(require,module,exports){
+'use strict';
+
+var _Item = require('./Item');
+
+var _Item2 = _interopRequireDefault(_Item);
+
+var _ItemOwner = require('./ItemOwner');
+
+var _ItemOwner2 = _interopRequireDefault(_ItemOwner);
+
+var _Comment = require('./Comment');
+
+var _Comment2 = _interopRequireDefault(_Comment);
+
+var _CommentForm = require('./CommentForm');
+
+var _CommentForm2 = _interopRequireDefault(_CommentForm);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var React = require('react');
+var ReactDOM = require('react-dom');
+
+var ItemWithComments = React.createClass({
+	displayName: 'ItemWithComments',
 	getInitialState: function getInitialState() {
 		return {
-			items: []
+			comments: []
 		};
 	},
-	fetchItems: function fetchItems() {
+	fetchItemComments: function fetchItemComments() {
+
+		var url = '/api/item/' + window.item.id + '/comments';
+
 		$.ajax({
-			url: this.props.url,
-			dataType: 'json',
+			url: url,
+			dataType: 'JSON',
+			type: 'GET',
 			cache: false,
 			success: function (data) {
-				this.setState({ items: data });
+				if (this.isMounted()) {
+					this.setState({ comments: data });
+				}
 			}.bind(this),
 			error: function (xhr, status, err) {
-				console.log('There was an error while making a request to ' + this.props.url);
+				console.log('Error on fetchItemComments()');
 			}.bind(this)
 		});
 	},
 	componentDidMount: function componentDidMount() {
-		this.fetchItems();
+		this.fetchItemComments();
+	},
+	handleCommentSubmit: function handleCommentSubmit(message) {
+		var newComments = this.state.comments.concat({
+			id: Date.now(),
+			user: {
+				name: window.user.info.name
+			},
+			message: message
+		});
+
+		this.setState({ comments: newComments });
+
+		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
+
+		$.ajax({
+			url: postCommentUrl,
+			dataType: 'JSON',
+			type: 'POST',
+			cache: false,
+			data: {
+				itemId: window.item.id,
+				userId: window.user.info.id,
+				message: message
+			},
+			headers: { 'X-CSRF-Token': $('meta[name="token"]').attr('content') },
+			success: function (data) {
+				this.fetchItemComments();
+			}.bind(this),
+			error: function (xhr, status, err) {
+				console.log('An error was occurred when posting a new comment.');
+			}.bind(this)
+		});
 	},
 	render: function render() {
-
-		var itemsList = this.state.items.map(function (item) {
-
-			var itemUrl = '/items/' + item.id;
-
-			return React.createElement(Item, {
-				key: item.id,
-				itemId: item.id,
-				price: item.price,
-				description: item.description,
-				path: item.path,
-				url: itemUrl });
+		var comments = this.state.comments.map(function (comment) {
+			return React.createElement(_Comment2.default, { key: comment.id,
+				user: comment.user_id,
+				message: comment.message });
 		});
+
+		var itemUrl = '/items/' + window.item.id;
 
 		return React.createElement(
 			'div',
-			{ className: 'items' },
-			itemsList
+			null,
+			React.createElement(
+				'div',
+				{ className: 'col s12 m6' },
+				React.createElement(
+					'div',
+					{ className: 'card-panel' },
+					React.createElement(_ItemOwner2.default, { userId: window.item.user_id }),
+					React.createElement(_Item2.default, { itemId: window.item.id,
+						path: window.item.path,
+						description: window.item.description,
+						url: itemUrl })
+				)
+			),
+			React.createElement(
+				'div',
+				{ className: 'col s12 m6' },
+				React.createElement(
+					'div',
+					{ className: 'Item__comments' },
+					React.createElement(
+						'div',
+						{ className: 'card-panel' },
+						React.createElement(
+							'h4',
+							{ className: 'Item__comments__title' },
+							'Comments'
+						),
+						comments,
+						React.createElement(_CommentForm2.default, { onCommentSubmit: this.handleCommentSubmit })
+					)
+				)
+			)
 		);
 	}
 });
 
-ReactDOM.render(React.createElement(Items, { url: '/api/items' }), document.getElementById('itemsList'));
+ReactDOM.render(React.createElement(ItemWithComments, null), document.getElementById('ItemWithComments'));
 
-},{"react":158,"react-dom":29}]},{},[159]);
+},{"./Comment":159,"./CommentForm":161,"./Item":162,"./ItemOwner":163,"react":158,"react-dom":29}],165:[function(require,module,exports){
+'use strict';
 
-//# sourceMappingURL=main.js.map
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
+
+var LikeButton = React.createClass({
+	displayName: 'LikeButton',
+	handleClick: function handleClick() {
+		if (!window.signedIn) {
+			alert('You need to login in before you can make this action.');
+			return false;
+		}
+
+		if (!this.props.liked) {
+			this.props.onLikeItem();
+		} else {
+			this.props.onUnlikeItem();
+		}
+	},
+	render: function render() {
+		return React.createElement(
+			'a',
+			{ onClick: this.handleClick, className: this.props.liked ? 'liked' : '' },
+			React.createElement(
+				'i',
+				{ className: 'material-icons tiny' },
+				'thumb_up'
+			),
+			' Like'
+		);
+	}
+});
+
+exports.default = LikeButton;
+
+},{"react":158}],166:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var React = require('react');
+
+var TotalLikesCount = React.createClass({
+	displayName: 'TotalLikesCount',
+	render: function render() {
+		var message = 'Be the first to like this post.';
+
+		if (this.props.count > 0) {
+			message = this.props.count + ' people like this';
+		}
+
+		return React.createElement(
+			'p',
+			null,
+			message
+		);
+	}
+});
+
+exports.default = TotalLikesCount;
+
+},{"react":158}]},{},[164]);
+
+//# sourceMappingURL=ItemWithComments.js.map

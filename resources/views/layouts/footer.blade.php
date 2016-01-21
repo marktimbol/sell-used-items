@@ -37,7 +37,8 @@
         </footer>
 
         <script src="{{ elixir('js/public.js') }}"></script>
-        <script src="/js/main.js"></script>
+        
+        @yield('footer_scripts')
 
   </body>
 </html>

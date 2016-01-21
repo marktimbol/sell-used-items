@@ -13,8 +13,8 @@
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
-        'name' => 'Mark Timbol',
-        'email' => 'mark.timbol@hotmail.com',
+        'name' => $faker->name,
+        'email' => $faker->email,
         'password' => bcrypt('marktimbol'),
         'remember_token' => str_random(10),
     ];
@@ -27,5 +27,14 @@ $factory->define(App\Item::class, function (Faker\Generator $faker) {
         'price' => $faker->randomNumber(2),
         'description' => $faker->paragraph,
         'path' => 'http://placehold.it/640x480'
+    ];
+});
+
+
+$factory->define(App\Comment::class, function (Faker\Generator $faker) {
+    return [
+        'item_id'   => factory(App\Item::class)->create()->id,
+        'user_id'   => factory(App\User::class)->create()->id,
+        'message' => $faker->paragraph
     ];
 });
