@@ -20,8 +20,11 @@ elixir(function(mix) {
     		'public.css'
     		], 'public/css/public.css')
 
+        .scripts([
+            '../../../bower_components/jquery/dist/jquery.js'
+            ], 'public/js/jquery.js')
+
     	.scripts([
-    		'../../../bower_components/jquery/dist/jquery.js',
     		'../../../bower_components/Materialize/dist/js/materialize.js',
             'main.js'
     		], 'public/js/public.js')
@@ -31,7 +34,8 @@ elixir(function(mix) {
 
     	.version([	
     		'public/css/public.css',
-    		'public/js/public.js'
+    		'public/js/public.js',
+            'public/js/jquery.js'
     		]);
 
 });

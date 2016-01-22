@@ -19316,7 +19316,7 @@ var ItemOwner = React.createClass({
 					React.createElement(
 						"h6",
 						{ className: "Item__user__name" },
-						"Full Name"
+						this.props.name
 					)
 				)
 			)
@@ -19378,6 +19378,19 @@ var ItemWithComments = React.createClass({
 	},
 	componentDidMount: function componentDidMount() {
 		this.fetchItemComments();
+
+		//     var pusher = new Pusher('c52f44867e285beeeb6f');
+
+		//     console.log(pusher);
+
+		//     var channel = pusher.subscribe('test-channel');
+
+		// console.log(channel);
+
+		//     channel.bind("App\\Events\\UserPostedAComment", function(comment) {
+		//     	alert('hi');
+		//         alert(comment);
+		//     });
 	},
 	handleCommentSubmit: function handleCommentSubmit(message) {
 		var newComments = this.state.comments.concat({
@@ -19420,6 +19433,8 @@ var ItemWithComments = React.createClass({
 
 		var itemUrl = '/items/' + window.item.id;
 
+		var displayCommentForm = false;
+
 		return React.createElement(
 			'div',
 			null,
@@ -19429,7 +19444,7 @@ var ItemWithComments = React.createClass({
 				React.createElement(
 					'div',
 					{ className: 'card-panel' },
-					React.createElement(_ItemOwner2.default, { userId: window.item.user_id }),
+					React.createElement(_ItemOwner2.default, { userId: window.item.user_id, name: window.item.user.name }),
 					React.createElement(_Item2.default, { itemId: window.item.id,
 						path: window.item.path,
 						description: window.item.description,
@@ -19451,7 +19466,7 @@ var ItemWithComments = React.createClass({
 							'Comments'
 						),
 						comments,
-						React.createElement(_CommentForm2.default, { onCommentSubmit: this.handleCommentSubmit })
+						window.signedIn ? React.createElement(_CommentForm2.default, { onCommentSubmit: this.handleCommentSubmit }) : 'Please login to post a comment.'
 					)
 				)
 			)

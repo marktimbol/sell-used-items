@@ -25,7 +25,7 @@ class ItemsController extends Controller
 
     public function show($id)
     {
-        $item = Item::findOrFail($id);
+        $item = Item::with('user')->findOrFail($id);
 
         \JavaScript::put([
             'signedIn' => Auth::check() ? true : false,

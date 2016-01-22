@@ -36,6 +36,19 @@ var ItemWithComments = React.createClass({
 
 	componentDidMount() {
 		this.fetchItemComments();
+
+    //     var pusher = new Pusher('c52f44867e285beeeb6f');
+
+    //     console.log(pusher);
+  
+    //     var channel = pusher.subscribe('test-channel');
+  
+  		// console.log(channel);
+
+    //     channel.bind("App\\Events\\UserPostedAComment", function(comment) {
+    //     	alert('hi');
+    //         alert(comment);
+    //     });
 	},
 
 	handleCommentSubmit(message) {
@@ -83,13 +96,15 @@ var ItemWithComments = React.createClass({
 
 		var itemUrl = '/items/' + window.item.id;
 
+		var displayCommentForm = false;
+
 		return (	
 
 			<div>
 				<div className="col s12 m6">
 					<div className="card-panel">
 
-						<ItemOwner userId={ window.item.user_id } />
+						<ItemOwner userId={ window.item.user_id } name={ window.item.user.name } />
 
 						<Item itemId={window.item.id} 
 							path={window.item.path}
@@ -105,7 +120,11 @@ var ItemWithComments = React.createClass({
 
 							{comments}
 
-							<CommentForm onCommentSubmit={this.handleCommentSubmit}/>
+							{ window.signedIn ? 
+								<CommentForm onCommentSubmit={this.handleCommentSubmit}/> : 
+								'Please login to post a comment.'
+							}
+							
 						</div>
 					</div>
 				</div>

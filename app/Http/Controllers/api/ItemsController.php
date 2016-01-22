@@ -47,7 +47,7 @@ class ItemsController extends Controller
 
     public function comments($item)
     {
-        $item = Item::findOrFail(1);
+        $item = Item::findOrFail($item);
 
         return $item->comments;
 
@@ -62,6 +62,12 @@ class ItemsController extends Controller
             'message'   => $request->message
             ]);
 
-        $item->comments()->save($comment);
+        $newComment = $item->comments()->save($comment);
+
+        // $pusher = new Pusher(public, secret, appId);
+
+        // $pusher->trigger('newCommentOnitem', UserPostedAComment::class, []);
+
+        // return 'Done';
     }
 }

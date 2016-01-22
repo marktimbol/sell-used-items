@@ -10,7 +10,7 @@ var ItemOwner = React.createClass({
 						<img src="http://materializecss.com/images/yuna.jpg" alt="" className="circle responsive-img" />
 					</div>
 					<div className="col s10">
-						<h6 className="Item__user__name">Full Name</h6>
+						<h6 className="Item__user__name">{ this.props.name }</h6>
 					</div>
 				</div>
 			</div>

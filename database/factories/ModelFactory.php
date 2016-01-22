@@ -23,7 +23,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Item::class, function (Faker\Generator $faker) {
     return [
-    	'user_id'	=> 1,
+    	'user_id'	=> factory(App\User::class)->create()->id,
         'price' => $faker->randomNumber(2),
         'description' => $faker->paragraph,
         'path' => 'http://placehold.it/640x480'

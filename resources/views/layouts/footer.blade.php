@@ -36,8 +36,10 @@
             </div>
         </footer>
 
+        <script src="{{ elixir('js/jquery.js') }}"></script>
         <script src="{{ elixir('js/public.js') }}"></script>
-        
+        <script src="https://js.pusher.com/3.0/pusher.min.js"></script>
+
         @yield('footer_scripts')
 
   </body>

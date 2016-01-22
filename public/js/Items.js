@@ -19220,6 +19220,14 @@ var Items = React.createClass({
 	},
 	componentDidMount: function componentDidMount() {
 		this.fetchItems();
+
+		var pusher = new Pusher('86f659a98a596ff7d50e');
+		var channel = pusher.subscribe('test-channel');
+
+		channel.bind('App\\Events\\UserRegistered', function (data) {
+			console.log(data);
+			alert('Hey Pusher.com');
+		});
 	},
 	render: function render() {
 

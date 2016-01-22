@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\UserRegistered;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -10,9 +12,29 @@
 | kernel and includes session state, CSRF protection, and more.
 |
 */
-
 Route::group(['middleware' => 'web'], function () {
     Route::auth();
+
+    Route::get('/fire', function() {
+    	event( new UserRegistered('test comment') );
+		// $app_id = '140720';
+		// $app_key = '86f659a98a596ff7d50e';
+		// $app_secret = '2a3029af03bf9383acfc';
+
+		// $pusher = new Pusher(
+		//   $app_key,
+		//   $app_secret,
+		//   $app_id,
+		//   array('encrypted' => true)
+		// );
+
+		// $data['message'] = 'hello world';
+
+		// return $pusher->trigger('test_channel', 'my_event', $data);
+
+
+  	    return 'Done';
+    });
 
     Route::get('/', ['as' => 'home', 'uses' => 'PagesController@home']);
     Route::get('/items', ['as' => 'items', 'uses' => 'ItemsController@index']); 
