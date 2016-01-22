@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Comment;
+use App\Events\UserPostedAComment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Item;
@@ -64,10 +65,6 @@ class ItemsController extends Controller
 
         $newComment = $item->comments()->save($comment);
 
-        // $pusher = new Pusher(public, secret, appId);
-
-        // $pusher->trigger('newCommentOnitem', UserPostedAComment::class, []);
-
-        // return 'Done';
+        event( new UserPostedAComment($newComment) );
     }
 }

@@ -7,7 +7,7 @@ use App\Events\Event;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class UserRegistered extends Event implements ShouldBroadcast
+class UserPostedAComment extends Event implements ShouldBroadcast
 {
     use SerializesModels;
 
@@ -30,6 +30,6 @@ class UserRegistered extends Event implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['test-channel'];
+        return ['new-comment-on-item-'.$this->comment->item_id];
     }
 }

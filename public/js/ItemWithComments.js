@@ -19379,29 +19379,25 @@ var ItemWithComments = React.createClass({
 	componentDidMount: function componentDidMount() {
 		this.fetchItemComments();
 
-		//     var pusher = new Pusher('c52f44867e285beeeb6f');
+		var pusher = new Pusher('86f659a98a596ff7d50e');
+		var channel = pusher.subscribe('new-comment-on-item-' + window.item.id);
 
-		//     console.log(pusher);
+		channel.bind('App\\Events\\UserPostedAComment', function (data) {
+			var newComments = this.state.comments.concat(data.comment);
 
-		//     var channel = pusher.subscribe('test-channel');
-
-		// console.log(channel);
-
-		//     channel.bind("App\\Events\\UserPostedAComment", function(comment) {
-		//     	alert('hi');
-		//         alert(comment);
-		//     });
+			this.setState({ comments: newComments });
+		}.bind(this));
 	},
 	handleCommentSubmit: function handleCommentSubmit(message) {
-		var newComments = this.state.comments.concat({
-			id: Date.now(),
-			user: {
-				name: window.user.info.name
-			},
-			message: message
-		});
+		// var newComments = this.state.comments.concat({
+		// 		id: Date.now(),
+		// 		user: {
+		// 			name: window.user.info.name
+		// 		},
+		// 		message: message
+		// 	});
 
-		this.setState({ comments: newComments });
+		// this.setState({ comments: newComments });
 
 		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
 
