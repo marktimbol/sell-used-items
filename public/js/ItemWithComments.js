@@ -19183,8 +19183,7 @@ var Item = React.createClass({
 	getInitialState: function getInitialState() {
 		return {
 			liked: false,
-			likesCount: 0,
-			comments: [1, 2, 3]
+			likesCount: 0
 		};
 	},
 	setLikeButtonClass: function setLikeButtonClass() {
@@ -19248,9 +19247,28 @@ var Item = React.createClass({
 			}
 		});
 	},
+	userLikedAnItem: function userLikedAnItem() {
+		var pusher = new Pusher('86f659a98a596ff7d50e');
+		var channel = pusher.subscribe('user-liked-an-item-' + window.item.id);
+
+		channel.bind('App\\Events\\UserLikedAnItem', function (data) {
+			this.setState({ likesCount: this.state.likesCount + 1 });
+		}.bind(this));
+	},
+	userUnlikedAnItem: function userUnlikedAnItem() {
+		var pusher = new Pusher('86f659a98a596ff7d50e');
+		var channel = pusher.subscribe('user-unliked-an-item-' + window.item.id);
+
+		channel.bind('App\\Events\\UserUnlikedAnItem', function (data) {
+			this.setState({ likesCount: this.state.likesCount - 1 });
+		}.bind(this));
+	},
 	componentDidMount: function componentDidMount() {
 		this.setLikeButtonClass();
 		this.fetchLikesCount();
+
+		this.userLikedAnItem();
+		this.userUnlikedAnItem();
 	},
 	render: function render() {
 		return React.createElement(
@@ -19376,28 +19394,39 @@ var ItemWithComments = React.createClass({
 			}.bind(this)
 		});
 	},
-	componentDidMount: function componentDidMount() {
-		this.fetchItemComments();
-
+	newCommentWasPosted: function newCommentWasPosted() {
 		var pusher = new Pusher('86f659a98a596ff7d50e');
-		var channel = pusher.subscribe('new-comment-on-item-' + window.item.id);
+		var newCommentChannel = pusher.subscribe('new-comment-on-item-' + window.item.id);
 
-		channel.bind('App\\Events\\UserPostedAComment', function (data) {
+		newCommentChannel.bind('App\\Events\\UserPostedAComment', function (data) {
+
 			var newComments = this.state.comments.concat(data.comment);
-
 			this.setState({ comments: newComments });
+
+			if (!('Notification' in window)) {
+				alert('Web Notification is not supported');
+				return;
+			}
+
+			Notification.requestPermission(function (permission) {
+				var notification = new Notification(data.comment.user_id + ' said:' + data.comment.message);
+			});
 		}.bind(this));
 	},
+	componentDidMount: function componentDidMount() {
+		this.fetchItemComments();
+		this.newCommentWasPosted();
+	},
 	handleCommentSubmit: function handleCommentSubmit(message) {
-		// var newComments = this.state.comments.concat({
-		// 		id: Date.now(),
-		// 		user: {
-		// 			name: window.user.info.name
-		// 		},
-		// 		message: message
-		// 	});
+		var newComments = this.state.comments.concat({
+			id: Date.now(),
+			user: {
+				name: window.user.info.name
+			},
+			message: message
+		});
 
-		// this.setState({ comments: newComments });
+		this.setState({ comments: newComments });
 
 		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
 

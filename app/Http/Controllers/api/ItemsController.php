@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Comment;
+use App\Events\UserLikedAnItem;
 use App\Events\UserPostedAComment;
+use App\Events\UserUnlikedAnItem;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Item;
@@ -29,6 +31,7 @@ class ItemsController extends Controller
  
         if( $item->like($userId) )
         {
+            event( new UserLikedAnItem($item) );
             return 'You liked an item.';
         }
 
@@ -41,6 +44,7 @@ class ItemsController extends Controller
 
         if( $item->unlike($userId) )
         {
+            event( new UserUnlikedAnItem($item) );
             return 'You unliked an item.';
         }
         return 'There was a problem unliking a post.';

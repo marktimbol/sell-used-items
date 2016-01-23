@@ -9,8 +9,7 @@ var Item = React.createClass({
 	getInitialState() {
 		return {
 			liked: false,
-			likesCount: 0,
-			comments: [1,2,3]
+			likesCount: 0
 		};
 	},
 
@@ -81,9 +80,30 @@ var Item = React.createClass({
 
 	},	
 
+	userLikedAnItem() {
+        var pusher = new Pusher('86f659a98a596ff7d50e');
+        var channel = pusher.subscribe('user-liked-an-item-' + window.item.id);
+
+        channel.bind("App\\Events\\UserLikedAnItem", function(data) {
+        	this.setState({ likesCount: this.state.likesCount + 1 });
+        }.bind(this));
+	},
+
+	userUnlikedAnItem() {
+        var pusher = new Pusher('86f659a98a596ff7d50e');
+        var channel = pusher.subscribe('user-unliked-an-item-' + window.item.id);
+
+        channel.bind("App\\Events\\UserUnlikedAnItem", function(data) {
+        	this.setState({ likesCount: this.state.likesCount - 1 });
+        }.bind(this));
+	},
+
 	componentDidMount() {
 		this.setLikeButtonClass();
 		this.fetchLikesCount();
+
+		this.userLikedAnItem();
+		this.userUnlikedAnItem();
 	},
 
 	render() {

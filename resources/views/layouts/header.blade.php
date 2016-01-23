@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
         <meta name="token" content="{{ csrf_token() }}" />
         <meta name="company_url" content="{{ env('COMPANY_URL') }}" />
+        <name name="pusher_key" content="{{ config('broadcasting.connections.pusher.key') }}" />
         <title>Laravel App</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="{{ elixir('css/public.css') }}" />

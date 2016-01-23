@@ -34,29 +34,42 @@ var ItemWithComments = React.createClass({
 		});
 	},
 
-	componentDidMount() {
-		this.fetchItemComments();
+	newCommentWasPosted() {
+		var pusher = new Pusher('86f659a98a596ff7d50e');
+        var newCommentChannel = pusher.subscribe('new-comment-on-item-' + window.item.id);
 
-        var pusher = new Pusher('86f659a98a596ff7d50e');
-        var channel = pusher.subscribe('new-comment-on-item-'+window.item.id);
-  
-        channel.bind("App\\Events\\UserPostedAComment", function(data) {
-            var newComments = this.state.comments.concat(data.comment);
+        newCommentChannel.bind("App\\Events\\UserPostedAComment", function(data) {
 
-            this.setState({ comments: newComments });
+	        var newComments = this.state.comments.concat(data.comment);
+	        this.setState({ comments: newComments });
+
+		    if (! ('Notification' in window)) {
+		        alert('Web Notification is not supported');
+		        return;
+		    }
+		    
+		    Notification.requestPermission(function(permission) {
+		        var notification = new Notification(data.comment.user_id +' said:' + data.comment.message);
+		    });
+
         }.bind(this));
 	},
 
-	handleCommentSubmit(message) {
-		// var newComments = this.state.comments.concat({
-		// 		id: Date.now(),
-		// 		user: {
-		// 			name: window.user.info.name
-		// 		},
-		// 		message: message
-		// 	});
+	componentDidMount() {
+		this.fetchItemComments();
+		this.newCommentWasPosted();
+	},
 
-		// this.setState({ comments: newComments });
+	handleCommentSubmit(message) {
+		var newComments = this.state.comments.concat({
+				id: Date.now(),
+				user: {
+					name: window.user.info.name
+				},
+				message: message
+			});
+
+		this.setState({ comments: newComments });
 
 		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
 
