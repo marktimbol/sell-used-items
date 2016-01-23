@@ -19053,7 +19053,7 @@ var Comment = React.createClass({
 					React.createElement(
 						"h6",
 						{ className: "Item__comment__name" },
-						this.props.user
+						this.props.user ? this.props.user : 'Guest'
 					),
 					React.createElement(
 						"p",
@@ -19259,8 +19259,8 @@ var Item = React.createClass({
 	},
 	componentWillMount: function componentWillMount() {
 		this.pusher = new Pusher('86f659a98a596ff7d50e');
-		this.likeItemChannel = this.pusher.subscribe('user-liked-an-item-' + window.item.id);
-		this.unlikeItemChannel = this.pusher.subscribe('user-unliked-an-item-' + window.item.id);
+		this.likeItemChannel = this.pusher.subscribe('user-liked-an-item-' + this.props.itemId);
+		this.unlikeItemChannel = this.pusher.subscribe('user-unliked-an-item-' + this.props.itemId);
 	},
 	componentDidMount: function componentDidMount() {
 		this.setLikeButtonClass();
@@ -19384,7 +19384,7 @@ var ItemWithComments = React.createClass({
 			cache: false,
 			success: function (data) {
 				if (this.isMounted()) {
-					this.setState({ comments: data });
+					this.setState({ comments: data.comments });
 				}
 			}.bind(this),
 			error: function (xhr, status, err) {
@@ -19394,19 +19394,18 @@ var ItemWithComments = React.createClass({
 	},
 	newCommentWasPosted: function newCommentWasPosted() {
 		this.newCommentChannel.bind('App\\Events\\UserPostedAComment', function (data) {
-
 			var newComments = this.state.comments.concat(data.comment);
 
 			this.setState({ comments: newComments });
 
-			if (!('Notification' in window)) {
-				alert('Web Notification is not supported');
-				return;
-			}
+			// if (! ('Notification' in window)) {
+			//     alert('Web Notification is not supported');
+			//     return;
+			// }
 
-			Notification.requestPermission(function (permission) {
-				var notification = new Notification(data.comment.user_id + ' said:' + data.comment.message);
-			});
+			// Notification.requestPermission(function(permission) {
+			//     var notification = new Notification(data.comment.user.name +' said:' + data.comment.message);
+			// });
 		}.bind(this));
 	},
 	componentWillMount: function componentWillMount() {
@@ -19418,15 +19417,6 @@ var ItemWithComments = React.createClass({
 		this.newCommentWasPosted();
 	},
 	handleCommentSubmit: function handleCommentSubmit(message) {
-		var newComments = this.state.comments.concat({
-			id: Date.now(),
-			user: {
-				name: window.user.info.name
-			},
-			message: message
-		});
-
-		this.setState({ comments: newComments });
 
 		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
 
@@ -19450,6 +19440,7 @@ var ItemWithComments = React.createClass({
 		});
 	},
 	render: function render() {
+
 		var comments = this.state.comments.map(function (comment) {
 			return React.createElement(_Comment2.default, { key: comment.id,
 				user: comment.user_id,

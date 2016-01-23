@@ -52,15 +52,15 @@ class ItemsController extends Controller
 
     public function comments($item)
     {
-        $item = Item::findOrFail($item);
+        $item = Item::with('comments.user')->findOrFail($item);
 
-        return $item->comments;
+        return $item;
 
     }
 
     public function storeComment($itemId, Request $request)
     {
-        $item = Item::findOrFail($itemId);
+        $item = Item::with('comments.user')->findOrFail($itemId);
 
         $comment = new Comment([
             'user_id'   => $request->userId,
@@ -69,6 +69,11 @@ class ItemsController extends Controller
 
         $newComment = $item->comments()->save($comment);
 
-        event( new UserPostedAComment($newComment) );
+        $result = Comment::with('user')->findOrFail($newComment->id);
+
+        event( new UserPostedAComment($result) );
+        
+        return $result;
+        
     }
 }

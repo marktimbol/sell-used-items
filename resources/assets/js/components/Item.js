@@ -94,8 +94,8 @@ var Item = React.createClass({
 
 	componentWillMount() {
 		this.pusher = new Pusher('86f659a98a596ff7d50e');
-    	this.likeItemChannel = this.pusher.subscribe('user-liked-an-item-' + window.item.id);
-    	this.unlikeItemChannel = this.pusher.subscribe('user-unliked-an-item-' + window.item.id);
+    	this.likeItemChannel = this.pusher.subscribe('user-liked-an-item-' + this.props.itemId);
+    	this.unlikeItemChannel = this.pusher.subscribe('user-unliked-an-item-' + this.props.itemId);
 	},
 
 	componentDidMount() {

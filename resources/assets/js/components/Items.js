@@ -32,11 +32,11 @@ var Items = React.createClass({
 	render() {
 
 		var items = this.state.items.map( function(item) {
-
+			// alert(item.id);
 			var itemUrl = '/items/' + item.id;
 
 			return (
-				<div className="col s6 m4">
+				<div className="col s6 m4" key={item.id}>
 					<Item key={item.id}
 						itemId={item.id} 
 						path={item.path}

@@ -25,7 +25,7 @@ var ItemWithComments = React.createClass({
 			cache: false,
 			success: function(data) {
 				if( this.isMounted() ) {
-					this.setState({ comments: data });
+					this.setState({ comments: data.comments });
 				}
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -36,19 +36,18 @@ var ItemWithComments = React.createClass({
 
 	newCommentWasPosted() {
         this.newCommentChannel.bind("App\\Events\\UserPostedAComment", function(data) {
-
 	        var newComments = this.state.comments.concat(data.comment);
 
 	        this.setState({ comments: newComments });
 
-		    if (! ('Notification' in window)) {
-		        alert('Web Notification is not supported');
-		        return;
-		    }
+		    // if (! ('Notification' in window)) {
+		    //     alert('Web Notification is not supported');
+		    //     return;
+		    // }
 		    
-		    Notification.requestPermission(function(permission) {
-		        var notification = new Notification(data.comment.user_id +' said:' + data.comment.message);
-		    });
+		    // Notification.requestPermission(function(permission) {
+		    //     var notification = new Notification(data.comment.user.name +' said:' + data.comment.message);
+		    // });
 
         }.bind(this));
 	},
@@ -64,15 +63,6 @@ var ItemWithComments = React.createClass({
 	},
 
 	handleCommentSubmit(message) {
-		var newComments = this.state.comments.concat({
-				id: Date.now(),
-				user: {
-					name: window.user.info.name
-				},
-				message: message
-			});
-
-		this.setState({ comments: newComments });
 
 		var postCommentUrl = '/api/item/' + window.item.id + '/comment';
 
@@ -98,6 +88,7 @@ var ItemWithComments = React.createClass({
 	},
 
 	render() {
+
 		var comments = this.state.comments.map( function(comment) {
 			return (				
 				<Comment key={comment.id}

@@ -10,7 +10,7 @@ var Comment = React.createClass({
 						<img src="http://materializecss.com/images/yuna.jpg" alt="" className="circle responsive-img" />
 					</div>
 					<div className="col s10">
-						<h6 className="Item__comment__name">{this.props.user}</h6>
+						<h6 className="Item__comment__name">{this.props.user ? this.props.user : 'Guest'}</h6>
 						<p>{this.props.message}</p>
 					</div>
 				</div>
