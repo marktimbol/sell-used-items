@@ -35,12 +35,10 @@ var ItemWithComments = React.createClass({
 	},
 
 	newCommentWasPosted() {
-		var pusher = new Pusher('86f659a98a596ff7d50e');
-        var newCommentChannel = pusher.subscribe('new-comment-on-item-' + window.item.id);
-
-        newCommentChannel.bind("App\\Events\\UserPostedAComment", function(data) {
+        this.newCommentChannel.bind("App\\Events\\UserPostedAComment", function(data) {
 
 	        var newComments = this.state.comments.concat(data.comment);
+
 	        this.setState({ comments: newComments });
 
 		    if (! ('Notification' in window)) {
@@ -53,6 +51,11 @@ var ItemWithComments = React.createClass({
 		    });
 
         }.bind(this));
+	},
+
+	componentWillMount() {
+		this.pusher = new Pusher('86f659a98a596ff7d50e');
+        this.newCommentChannel = this.pusher.subscribe('new-comment-on-item-' + window.item.id);
 	},
 
 	componentDidMount() {
